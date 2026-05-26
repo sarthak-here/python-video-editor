@@ -1,0 +1,7 @@
+fastapi==0.115.5
+uvicorn==0.32.1
+moviepy==1.0.3
+python-multipart==0.0.18
+aiofiles==24.1.0
+Pillow==11.0.0
+numpy==1.26.4

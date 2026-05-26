@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Video Editor</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<header>
+  <span class="emoji">🎬</span>
+  <h1>Python Video Editor</h1>
+</header>
+
+<div class="container">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-panel="panel-trim">✂️ Trim</button>
+    <button class="tab-btn"        data-panel="panel-merge">🔗 Merge</button>
+    <button class="tab-btn"        data-panel="panel-text">🔤 Add Text</button>
+    <button class="tab-btn"        data-panel="panel-audio">🔊 Audio</button>
+  </div>
+
+  <!-- ── TRIM ── -->
+  <div id="panel-trim" class="panel active">
+    <div class="card">
+      <h2>✂️ Trim Video</h2>
+      <form id="form-trim" enctype="multipart/form-data">
+
+        <div class="form-group">
+          <label>Video file</label>
+          <div class="drop-zone">
+            <span class="dz-icon">📂</span>
+            <span class="dz-hint">Click or drag a video file here</span>
+            <div class="dz-files"></div>
+            <input type="file" name="file" accept="video/*" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label>Start (seconds)</label>
+            <input type="number" name="start" value="0" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label>End (seconds)</label>
+            <input type="number" name="end" value="10" min="0.1" step="0.1" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">✂️ Trim Video</button>
+      </form>
+
+      <div class="spinner" id="spin-trim">
+        <div class="spin"></div> Processing… this may take a moment
+      </div>
+
+      <div class="result-box" id="result-trim">
+        <video controls></video>
+        <div class="result-actions">
+          <a class="btn btn-primary dl-btn" href="#">⬇️ Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MERGE ── -->
+  <div id="panel-merge" class="panel">
+    <div class="card">
+      <h2>🔗 Merge Videos</h2>
+      <form id="form-merge" enctype="multipart/form-data">
+
+        <div class="form-group">
+          <label>Video files (select 2 or more, in order)</label>
+          <div class="drop-zone">
+            <span class="dz-icon">📂</span>
+            <span class="dz-hint">Click or drag multiple video files here</span>
+            <div class="dz-files"></div>
+            <input type="file" name="files" accept="video/*" multiple required />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">🔗 Merge Videos</button>
+      </form>
+
+      <div class="spinner" id="spin-merge">
+        <div class="spin"></div> Merging videos… this may take a while
+      </div>
+
+      <div class="result-box" id="result-merge">
+        <video controls></video>
+        <div class="result-actions">
+          <a class="btn btn-primary dl-btn" href="#">⬇️ Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TEXT ── -->
+  <div id="panel-text" class="panel">
+    <div class="card">
+      <h2>🔤 Add Text Overlay</h2>
+      <form id="form-text" enctype="multipart/form-data">
+
+        <div class="form-group">
+          <label>Video file</label>
+          <div class="drop-zone">
+            <span class="dz-icon">📂</span>
+            <span class="dz-hint">Click or drag a video file here</span>
+            <div class="dz-files"></div>
+            <input type="file" name="file" accept="video/*" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Text to overlay</label>
+          <input type="text" name="text" placeholder="Hello World!" required />
+        </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label>Font size</label>
+            <input type="number" name="font_size" value="50" min="10" max="200" />
+          </div>
+          <div class="form-group">
+            <label>Text color</label>
+            <select name="color">
+              <option value="white">White</option>
+              <option value="yellow">Yellow</option>
+              <option value="red">Red</option>
+              <option value="black">Black</option>
+              <option value="cyan">Cyan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Position</label>
+            <select name="position">
+              <option value="bottom">Bottom</option>
+              <option value="center">Center</option>
+              <option value="top">Top</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label>Show from (sec)</label>
+            <input type="number" name="start" value="0" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label>Show until (sec, 0 = full video)</label>
+            <input type="number" name="end" value="0" min="0" step="0.1" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">🔤 Add Text</button>
+      </form>
+
+      <div class="spinner" id="spin-text">
+        <div class="spin"></div> Burning text overlay…
+      </div>
+
+      <div class="result-box" id="result-text">
+        <video controls></video>
+        <div class="result-actions">
+          <a class="btn btn-primary dl-btn" href="#">⬇️ Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AUDIO ── -->
+  <div id="panel-audio" class="panel">
+    <div class="card">
+      <h2>🔊 Audio Control</h2>
+      <form id="form-audio" enctype="multipart/form-data">
+
+        <div class="form-group">
+          <label>Video file</label>
+          <div class="drop-zone">
+            <span class="dz-icon">📂</span>
+            <span class="dz-hint">Click or drag a video file here</span>
+            <div class="dz-files"></div>
+            <input type="file" name="file" accept="video/*" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="range-label">
+            <label>Volume multiplier</label>
+            <span id="vol-label">1.0×</span>
+          </div>
+          <input type="range" id="volume" name="volume" min="0" max="3" step="0.1" value="1.0" />
+          <small style="color:var(--muted); font-size:0.8rem;">0 = mute &nbsp;|&nbsp; 1 = original &nbsp;|&nbsp; 2+ = louder</small>
+        </div>
+
+        <div class="form-group">
+          <label>Replace audio (optional — pick an audio/video file)</label>
+          <div class="drop-zone">
+            <span class="dz-icon">🎵</span>
+            <span class="dz-hint">Optional: drag an audio file to replace the track</span>
+            <div class="dz-files"></div>
+            <input type="file" name="replace_audio" accept="audio/*,video/*" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">🔊 Process Audio</button>
+      </form>
+
+      <div class="spinner" id="spin-audio">
+        <div class="spin"></div> Processing audio…
+      </div>
+
+      <div class="result-box" id="result-audio">
+        <video controls></video>
+        <div class="result-actions">
+          <a class="btn btn-primary dl-btn" href="#">⬇️ Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<div id="toast"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
