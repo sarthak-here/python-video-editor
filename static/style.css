@@ -266,3 +266,296 @@ input[type="range"] {
   .row { flex-direction: column; }
   .container { padding: 1rem; }
 }
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Video Preview — frame-by-frame scrubber
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.pv-wrap {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  margin: 0.9rem 0 1.1rem;
+}
+
+/* Header row */
+.pv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.pv-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent2);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.pv-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.pv-fps-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pv-fps {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  width: auto;
+  cursor: pointer;
+}
+
+.pv-mute-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  line-height: 1.4;
+}
+.pv-mute-btn:hover { border-color: var(--accent); }
+
+/* Video */
+.pv-video {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+  background: #000;
+  max-height: 320px;
+  object-fit: contain;
+  margin-bottom: 0.9rem;
+}
+
+/* ── Timeline ── */
+.pv-tl-outer { margin-bottom: 0.8rem; }
+
+.pv-tl {
+  position: relative;
+  height: 44px;
+  background: #0a0a10;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: crosshair;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Selected range */
+.pv-tl-range {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: rgba(124, 106, 247, 0.22);
+  border-left:  2px solid var(--accent);
+  border-right: 2px solid var(--accent2);
+  pointer-events: none;
+}
+
+/* In-point marker */
+.pv-tl-in {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: var(--accent);
+  transform: translateX(-1px);
+  pointer-events: none;
+}
+.pv-tl-in::after {
+  content: 'IN';
+  position: absolute;
+  bottom: 3px;
+  left: 4px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  opacity: 0.85;
+}
+
+/* Out-point marker */
+.pv-tl-out {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: var(--accent2);
+  transform: translateX(-1px);
+  pointer-events: none;
+}
+.pv-tl-out::after {
+  content: 'OUT';
+  position: absolute;
+  bottom: 3px;
+  right: 4px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--accent2);
+  opacity: 0.85;
+}
+
+/* Playhead */
+.pv-tl-head {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: #fff;
+  transform: translateX(-1px);
+  pointer-events: none;
+  box-shadow: 0 0 5px rgba(255,255,255,0.45);
+}
+
+/* Timeline meta (times + frame counter) */
+.pv-tl-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+}
+
+.pv-cur-time, .pv-dur {
+  font-family: monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.pv-frame-info {
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Playback controls ── */
+.pv-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.pv-controls .btn {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.82rem;
+}
+
+/* ── Mark In / Out ── */
+.pv-marks {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  gap: 0.5rem;
+}
+
+.pv-mark-side {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.pv-mark-side--right {
+  flex-direction: row-reverse;
+}
+
+.pv-mark-middle {
+  flex: 1;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* In/Out value badges */
+.badge-in, .badge-out {
+  font-family: monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.badge-in {
+  background: rgba(124, 106, 247, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(124, 106, 247, 0.4);
+}
+
+.badge-out {
+  background: rgba(94, 234, 212, 0.12);
+  color: var(--accent2);
+  border: 1px solid rgba(94, 234, 212, 0.35);
+}
+
+/* Mark buttons */
+.pv-mark-in, .pv-mark-out {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+}
+
+.pv-mark-in {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+.pv-mark-in:hover { background: rgba(124, 106, 247, 0.18); }
+
+.pv-mark-out {
+  border: 1px solid var(--accent2);
+  color: var(--accent2);
+}
+.pv-mark-out:hover { background: rgba(94, 234, 212, 0.15); }
+
+/* Hint */
+.pv-hint {
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 0.65rem;
+  opacity: 0.75;
+}
+
+/* ── Flash animation when In/Out auto-fills a form field ── */
+@keyframes fieldFlash {
+  0%   { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.28); background: rgba(94, 234, 212, 0.06); }
+  100% { border-color: var(--border);  box-shadow: none; background: transparent; }
+}
+
+.field-flash {
+  animation: fieldFlash 0.75s ease-out forwards;
+}
+
+/* ── Preview responsive ── */
+@media (max-width: 600px) {
+  .pv-marks { flex-wrap: wrap; }
+  .pv-mark-middle { width: 100%; order: 3; }
+  .pv-controls .btn { padding: 0.38rem 0.6rem; font-size: 0.78rem; }
+}
