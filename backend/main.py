@@ -1,37 +1,28 @@
-"""
-FastAPI backend for the Python Video Editor.
-Run with: uvicorn main:app --reload
-"""
-
-import os
 import uuid
 import shutil
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, UploadFile, Form, HTTPException
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
 
-import editor
+from . import editor
 
-BASE_DIR  = Path(__file__).parent
-UPLOAD_DIR = BASE_DIR / "uploads"
-OUTPUT_DIR = BASE_DIR / "outputs"
+ROOT_DIR    = Path(__file__).resolve().parent.parent
+BACKEND_DIR = Path(__file__).resolve().parent
+UPLOAD_DIR  = BACKEND_DIR / "uploads"
+OUTPUT_DIR  = BACKEND_DIR / "outputs"
 UPLOAD_DIR.mkdir(exist_ok=True)
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 app = FastAPI(title="Python Video Editor")
-app.mount("/static",  StaticFiles(directory=BASE_DIR / "static"),  name="static")
-app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR),           name="outputs")
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR),           name="uploads")
+app.mount("/static",  StaticFiles(directory=ROOT_DIR / "frontend" / "static"),  name="static")
+app.mount("/outputs", StaticFiles(directory=OUTPUT_DIR), name="outputs")
+app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+templates = Jinja2Templates(directory=str(ROOT_DIR / "frontend" / "templates"))
 
-templates = Jinja2Templates(directory=BASE_DIR / "templates")
-
-
-# ── Helpers ──────────────────────────────────────────────────────────────────
 
 def save_upload(file: UploadFile) -> str:
     ext  = Path(file.filename).suffix
@@ -44,8 +35,6 @@ def save_upload(file: UploadFile) -> str:
 def unique_output(suffix: str = ".mp4") -> str:
     return f"{uuid.uuid4().hex}{suffix}"
 
-
-# ── Routes ────────────────────────────────────────────────────────────────────
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -101,8 +90,8 @@ async def add_text(
 
 @app.post("/audio")
 async def audio_control(
-    file:         UploadFile           = File(...),
-    volume:       float                = Form(1.0),
+    file:          UploadFile           = File(...),
+    volume:        float                = Form(1.0),
     replace_audio: Optional[UploadFile] = File(None),
 ):
     path = save_upload(file)
