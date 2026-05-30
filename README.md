@@ -10,6 +10,37 @@ A browser-based video editor built with **FastAPI** + **MoviePy** + **FFmpeg**.
 | 🔗 **Merge** | Concatenate multiple video files in order |
 | 🔤 **Add Text** | Burn text overlays with custom font, color & position |
 | 🔊 **Audio** | Mute, boost volume, or replace the entire audio track |
+| 🎨 **Adjust** | Color grading, filters, and transforms (see below) |
+
+### 🎨 Adjust — Color, Filters & Transform
+
+#### Color & Tone
+| Control | Range | Effect |
+|---|---|---|
+| **Brightness** | 0 – 3× | Darken to overexpose |
+| **Contrast** | 0 – 3× | Flat gray to punchy |
+| **Saturation** | 0 – 3× | Desaturate to vivid |
+| **Sharpness** | 0 – 3× | Blur to over-sharpen |
+| **Gamma** | 0.1 – 3 | < 1 darkens, > 1 brightens midtones |
+| **Hue Shift** | −180° – +180° | Rotates all colors around the hue wheel |
+| **Vignette** | 0 – 100% | Darkens edges and corners |
+
+#### Filters
+| Filter | Description |
+|---|---|
+| **Grayscale** | Convert to black & white |
+| **Sepia** | Warm brownish vintage tone |
+| **Invert Colors** | Photographic negative |
+
+> Grayscale and Sepia are mutually exclusive; Invert can combine with either.
+
+#### Transform
+| Control | Options | Description |
+|---|---|---|
+| **Speed** | 0.25× – 4× | Slow-motion or fast-forward |
+| **Rotate** | 90° CCW / 180° / 90° CW | Rotate the frame |
+| **Flip Horizontal** | On / Off | Mirror left ↔ right |
+| **Flip Vertical** | On / Off | Mirror top ↕ bottom |
 
 ### 🎞️ Frame-by-Frame Preview (Trim & Add Text)
 
@@ -52,15 +83,16 @@ Then open **http://localhost:8000** in your browser.
 ## Project Structure
 ```
 video-editor/
-├── main.py              # FastAPI routes
-├── editor.py            # MoviePy processing logic
-├── templates/
-│   └── index.html       # Browser UI
-├── static/
-│   ├── style.css        # All styles including preview panel
-│   └── app.js           # Tab logic, VideoPreview class, form handling
-├── uploads/             # Temp input files (gitignored)
-├── outputs/             # Processed videos (gitignored)
+├── backend/
+│   ├── main.py          # FastAPI routes
+│   └── editor.py        # MoviePy processing logic
+├── frontend/
+│   ├── templates/
+│   │   └── index.html   # Browser UI
+│   └── static/
+│       ├── style.css    # All styles
+│       └── app.js       # Tab logic, VideoPreview class, form handling
+├── start.bat            # One-click server start (Windows)
 └── requirements.txt
 ```
 
