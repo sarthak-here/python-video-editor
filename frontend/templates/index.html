@@ -21,6 +21,7 @@
     <button class="tab-btn"        data-panel="panel-merge">🔗 Merge</button>
     <button class="tab-btn"        data-panel="panel-text">🔤 Add Text</button>
     <button class="tab-btn"        data-panel="panel-audio">🔊 Audio</button>
+    <button class="tab-btn"        data-panel="panel-adjust">🎨 Adjust</button>
   </div>
 
   <!-- ── TRIM ── -->
@@ -214,6 +215,166 @@
       </div>
 
       <div class="result-box" id="result-audio">
+        <video controls></video>
+        <div class="result-actions">
+          <a class="btn btn-primary dl-btn" href="#">⬇️ Download</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADJUST ── -->
+  <div id="panel-adjust" class="panel">
+    <div class="card">
+      <h2>🎨 Adjust Video</h2>
+      <form id="form-adjust" enctype="multipart/form-data">
+
+        <div class="form-group">
+          <label>Video file</label>
+          <div class="drop-zone">
+            <span class="dz-icon">📂</span>
+            <span class="dz-hint">Click or drag a video file here</span>
+            <div class="dz-files"></div>
+            <input type="file" name="file" accept="video/*" required />
+          </div>
+        </div>
+
+        <video id="adj-preview" controls style="display:none; width:100%; border-radius:8px; background:#000; max-height:240px; margin:0.75rem 0 0.25rem;"></video>
+
+        <!-- ── Color & Tone ── -->
+        <div class="adj-section">
+          <div class="adj-section-header">Color &amp; Tone</div>
+          <div class="adj-grid">
+
+            <div class="adj-slider-item">
+              <div class="range-label">
+                <label>Brightness</label>
+                <span class="adj-val" id="val-brightness">1.00</span>
+              </div>
+              <input type="range" name="brightness" min="0" max="3" step="0.05" value="1" data-default="1" />
+            </div>
+
+            <div class="adj-slider-item">
+              <div class="range-label">
+                <label>Contrast</label>
+                <span class="adj-val" id="val-contrast">1.00</span>
+              </div>
+              <input type="range" name="contrast" min="0" max="3" step="0.05" value="1" data-default="1" />
+            </div>
+
+            <div class="adj-slider-item">
+              <div class="range-label">
+                <label>Saturation</label>
+                <span class="adj-val" id="val-saturation">1.00</span>
+              </div>
+              <input type="range" name="saturation" min="0" max="3" step="0.05" value="1" data-default="1" />
+            </div>
+
+            <div class="adj-slider-item">
+              <div class="range-label">
+                <label>Sharpness</label>
+                <span class="adj-val" id="val-sharpness">1.00</span>
+              </div>
+              <input type="range" name="sharpness" min="0" max="3" step="0.05" value="1" data-default="1" />
+            </div>
+
+            <div class="adj-slider-item">
+              <div class="range-label">
+                <label>Gamma <small style="color:var(--muted); text-transform:none;">(brighter &gt;1)</small></label>
+                <span class="adj-val" id="val-gamma">1.00</span>
+              </div>
+              <input type="range" name="gamma" min="0.1" max="3" step="0.05" value="1" data-default="1" />
+            </div>
+
+            <div class="adj-slider-item">
+              <div class="range-label">
+                <label>Hue Shift</label>
+                <span class="adj-val" id="val-hue_shift">0°</span>
+              </div>
+              <input type="range" name="hue_shift" min="-180" max="180" step="1" value="0" data-default="0" />
+            </div>
+
+            <div class="adj-slider-item adj-full">
+              <div class="range-label">
+                <label>Vignette</label>
+                <span class="adj-val" id="val-vignette">0%</span>
+              </div>
+              <input type="range" name="vignette" min="0" max="1" step="0.05" value="0" data-default="0" />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── Filters ── -->
+        <div class="adj-section">
+          <div class="adj-section-header">Filters</div>
+          <div class="adj-toggles">
+            <input type="hidden" name="grayscale" id="grayscale-val" value="0" />
+            <button type="button" class="btn adj-toggle adj-filter-toggle"
+                    data-target="grayscale-val" data-name="grayscale">Grayscale</button>
+
+            <input type="hidden" name="sepia" id="sepia-val" value="0" />
+            <button type="button" class="btn adj-toggle adj-filter-toggle"
+                    data-target="sepia-val" data-name="sepia">Sepia</button>
+
+            <input type="hidden" name="invert" id="invert-val" value="0" />
+            <button type="button" class="btn adj-toggle"
+                    data-target="invert-val">Invert Colors</button>
+          </div>
+        </div>
+
+        <!-- ── Transform ── -->
+        <div class="adj-section">
+          <div class="adj-section-header">Transform</div>
+
+          <div class="adj-slider-item" style="margin-bottom:1rem;">
+            <div class="range-label">
+              <label>Speed</label>
+              <span class="adj-val" id="val-speed">1.00×</span>
+            </div>
+            <input type="range" name="speed" min="0.25" max="4" step="0.05" value="1" data-default="1" />
+            <small style="color:var(--muted); font-size:0.78rem;">0.25× = slow-mo &nbsp;|&nbsp; 1× = normal &nbsp;|&nbsp; 4× = fast</small>
+          </div>
+
+          <div class="row" style="margin-bottom:0.75rem;">
+            <div class="form-group">
+              <label>Rotate</label>
+              <select name="rotate_deg">
+                <option value="0">No rotation</option>
+                <option value="90">90° CCW</option>
+                <option value="180">180°</option>
+                <option value="270">90° CW (270° CCW)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="adj-toggles">
+            <input type="hidden" name="flip_h" id="flip-h-val" value="0" />
+            <button type="button" class="btn adj-toggle"
+                    data-target="flip-h-val">↔ Flip Horizontal</button>
+
+            <input type="hidden" name="flip_v" id="flip-v-val" value="0" />
+            <button type="button" class="btn adj-toggle"
+                    data-target="flip-v-val">↕ Flip Vertical</button>
+          </div>
+        </div>
+
+        <p style="font-size:0.8rem; color:var(--muted); margin-bottom:1rem;">
+          ⚡ Color effects process each frame — larger videos take longer.
+        </p>
+
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <button type="button" id="adj-reset" class="btn btn-outline">↺ Reset All</button>
+          <button type="submit" class="btn btn-primary">🎨 Apply Adjustments</button>
+        </div>
+
+      </form>
+
+      <div class="spinner" id="spin-adjust">
+        <div class="spin"></div> Processing adjustments… may take a moment
+      </div>
+
+      <div class="result-box" id="result-adjust">
         <video controls></video>
         <div class="result-actions">
           <a class="btn btn-primary dl-btn" href="#">⬇️ Download</a>

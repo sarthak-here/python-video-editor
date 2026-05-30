@@ -104,6 +104,40 @@ async def audio_control(
     return {"url": f"/outputs/{Path(out).name}", "filename": Path(out).name}
 
 
+@app.post("/adjust")
+async def adjust(
+    file:       UploadFile = File(...),
+    brightness: float = Form(1.0),
+    contrast:   float = Form(1.0),
+    saturation: float = Form(1.0),
+    sharpness:  float = Form(1.0),
+    gamma:      float = Form(1.0),
+    hue_shift:  float = Form(0.0),
+    grayscale:  int   = Form(0),
+    sepia:      int   = Form(0),
+    invert:     int   = Form(0),
+    vignette:   float = Form(0.0),
+    speed:      float = Form(1.0),
+    flip_h:     int   = Form(0),
+    flip_v:     int   = Form(0),
+    rotate_deg: float = Form(0.0),
+):
+    path = save_upload(file)
+    try:
+        out = editor.adjust_video(
+            path, unique_output(),
+            brightness=brightness, contrast=contrast,
+            saturation=saturation, sharpness=sharpness,
+            gamma=gamma, hue_shift=hue_shift,
+            grayscale=bool(grayscale), sepia=bool(sepia), invert=bool(invert),
+            vignette=vignette, speed=speed,
+            flip_h=bool(flip_h), flip_v=bool(flip_v), rotate_deg=rotate_deg,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    return {"url": f"/outputs/{Path(out).name}", "filename": Path(out).name}
+
+
 @app.get("/download/{filename}")
 async def download(filename: str):
     fp = OUTPUT_DIR / filename

@@ -407,3 +407,76 @@ submitForm('form-trim',  '/trim',     'result-trim',  'spin-trim');
 submitForm('form-merge', '/merge',    'result-merge', 'spin-merge');
 submitForm('form-text',  '/add-text', 'result-text',  'spin-text');
 submitForm('form-audio', '/audio',    'result-audio', 'spin-audio');
+submitForm('form-adjust','/adjust',   'result-adjust','spin-adjust');
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Adjust panel — sliders, toggles, reset
+// ═══════════════════════════════════════════════════════════════════════════════
+(function setupAdjust() {
+
+  // ── Format slider display values ────────────────────────────────────────────
+  function fmtVal(name, raw) {
+    const n = parseFloat(raw);
+    if (name === 'hue_shift') return (n >= 0 ? '+' : '') + n.toFixed(0) + '°';
+    if (name === 'vignette')  return Math.round(n * 100) + '%';
+    if (name === 'speed')     return n.toFixed(2) + '×';
+    return n.toFixed(2);
+  }
+
+  // ── Live slider labels ────────────────────────────────────────────────────
+  document.querySelectorAll('#form-adjust input[type=range]').forEach(sl => {
+    const valEl = document.getElementById('val-' + sl.name);
+    if (!valEl) return;
+    sl.addEventListener('input', () => { valEl.textContent = fmtVal(sl.name, sl.value); });
+  });
+
+  // ── Toggle buttons (grayscale/sepia exclusive; others independent) ────────
+  document.querySelectorAll('#form-adjust .adj-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const willActivate = !btn.classList.contains('active');
+      const isColorFilter = btn.classList.contains('adj-filter-toggle') &&
+                            ['grayscale', 'sepia'].includes(btn.dataset.name);
+
+      if (willActivate && isColorFilter) {
+        // Deactivate the other color filter (grayscale ↔ sepia exclusive)
+        document.querySelectorAll('#form-adjust .adj-filter-toggle').forEach(other => {
+          if (other !== btn && ['grayscale', 'sepia'].includes(other.dataset.name)) {
+            other.classList.remove('active');
+            document.getElementById(other.dataset.target).value = '0';
+          }
+        });
+      }
+
+      btn.classList.toggle('active');
+      document.getElementById(btn.dataset.target).value =
+        btn.classList.contains('active') ? '1' : '0';
+    });
+  });
+
+  // ── Reset All ────────────────────────────────────────────────────────────
+  document.getElementById('adj-reset').addEventListener('click', () => {
+    document.querySelectorAll('#form-adjust input[type=range]').forEach(sl => {
+      sl.value = sl.dataset.default;
+      const valEl = document.getElementById('val-' + sl.name);
+      if (valEl) valEl.textContent = fmtVal(sl.name, sl.value);
+    });
+    document.querySelectorAll('#form-adjust .adj-toggle').forEach(btn => {
+      btn.classList.remove('active');
+      document.getElementById(btn.dataset.target).value = '0';
+    });
+    const rotSel = document.querySelector('#form-adjust select[name=rotate_deg]');
+    if (rotSel) rotSel.value = '0';
+  });
+
+  // ── Simple video preview on file select ───────────────────────────────────
+  document.querySelector('#form-adjust [name=file]').addEventListener('change', function () {
+    if (!this.files[0]) return;
+    const preview = document.getElementById('adj-preview');
+    const old = preview.src;
+    if (old && old.startsWith('blob:')) URL.revokeObjectURL(old);
+    preview.src = URL.createObjectURL(this.files[0]);
+    preview.style.display = 'block';
+  });
+
+})();
